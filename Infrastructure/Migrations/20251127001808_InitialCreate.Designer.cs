@@ -65,11 +65,6 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("CategoriaId");
 
-                    b.ToTable("Produtos", (string)null);
-                });
-
-            modelBuilder.Entity("APS2.Domain.Entities.Produto", b =>
-                {
                     b.HasOne("APS2.Domain.Entities.Categoria", "Categoria")
                         .WithMany("Produtos")
                         .HasForeignKey("CategoriaId")
@@ -77,6 +72,8 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Categoria");
+
+                    b.ToTable("Produtos", (string)null);
                 });
 
             modelBuilder.Entity("APS2.Domain.Entities.Categoria", b =>
