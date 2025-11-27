@@ -1,0 +1,13 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Bem-vindo à APS2</h1>
+    <p>Clean Architecture &amp; Domain-Driven Design</p>
+    <p>Selecione uma opção no menu para começar.</p>
+    <div class="mt-4">
+        <a class="btn btn-primary btn-lg" asp-controller="Categorias" asp-action="Index">Gerenciar Categorias</a>
+        <a class="btn btn-success btn-lg" asp-controller="Produtos" asp-action="Index">Gerenciar Produtos</a>
+    </div>
+</div>

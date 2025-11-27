@@ -1,0 +1,106 @@
+@model IEnumerable<APS2.Application.ViewModels.ProdutoViewModel>
+
+@{
+    ViewData["Title"] = "Produtos";
+}
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1>Produtos</h1>
+        </div>
+        <div class="col-md-4 text-end">
+            <a asp-action="Create" class="btn btn-primary">Novo Produto</a>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <form method="get" asp-action="Index" class="form-inline">
+                <div class="input-group w-100">
+                    <input type="text" name="search" class="form-control" placeholder="Buscar produto..." value="@ViewBag.SearchQuery" />
+                    <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">Limpar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (Model.Any())
+    {
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Preço</th>
+                    <th>Categoria</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var produto in Model)
+                {
+                    <tr>
+                        <td>@produto.Id</td>
+                        <td>@produto.Nome</td>
+                        <td>@produto.Preco.ToString("C")</td>
+                        <td>@(produto.CategoriaId)</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@produto.Id" class="btn btn-sm btn-warning">Editar</a>
+                            <form method="post" asp-action="Delete" asp-route-id="@produto.Id" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja deletar?')">Deletar</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            Nenhum produto encontrado.
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // AJAX search for dynamic search
+        document.addEventListener('DOMContentLoaded', function () {
+            var searchInput = document.querySelector('input[name="search"]');
+            if (searchInput) {
+                searchInput.addEventListener('keyup', function () {
+                    var query = this.value;
+                    if (query.length > 0) {
+                        fetch(`/Produtos/Search?query=${encodeURIComponent(query)}`)
+                            .then(r => r.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // Update table with results
+                                    var tbody = document.querySelector('tbody');
+                                    if (tbody && data.data.length > 0) {
+                                        tbody.innerHTML = data.data.map(prod =>
+                                            `<tr>
+                                                <td>${prod.id}</td>
+                                                <td>${prod.nome}</td>
+                                                <td>${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(prod.preco)}</td>
+                                                <td>${prod.categoriaId}</td>
+                                                <td>
+                                                    <a href="/Produtos/Edit/${prod.id}" class="btn btn-sm btn-warning">Editar</a>
+                                                    <form method="post" action="/Produtos/Delete/${prod.id}" style="display:inline;">
+                                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza?')">Deletar</button>
+                                                    </form>
+                                                </td>
+                                            </tr>`
+                                        ).join('');
+                                    }
+                                }
+                            });
+                    }
+                });
+            }
+        });
+    </script>
+}
